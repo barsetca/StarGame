@@ -23,7 +23,7 @@ public class BaseScreen implements Screen, InputProcessor {
     private Matrix4 worldToGl;
     private Matrix3 screenToWorld;
 
-    private Vector2 touch;
+    public Vector2 touch;
 
     @Override
     public void show() {
