@@ -1,16 +1,11 @@
 package ru.geekbrains.screen;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
-import ru.geekbrains.StarGame;
 import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.sprite.Background;
-import ru.geekbrains.sprite.ButtonExit;
-import ru.geekbrains.sprite.Logo;
 
 public class GameScreen extends BaseScreen {
 
