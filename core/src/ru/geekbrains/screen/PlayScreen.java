@@ -1,48 +1,47 @@
 package ru.geekbrains.screen;
 
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.StarGame;
 import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.ExitGame;
-import ru.geekbrains.sprite.PlayGame;
+import ru.geekbrains.sprite.Logo;
 
-public class MenuScreen extends BaseScreen {
+public class PlayScreen extends BaseScreen {
 
+    private Texture img;
     private Texture bg;
     private Texture exit;
-    private Texture play;
     private Background background;
-
+    private Logo logo;
     private ExitGame exitGame;
-    private PlayGame playGame;
+
     private StarGame starGame;
 
-    public MenuScreen(StarGame starGame) {
+    public PlayScreen(StarGame starGame) {
         this.starGame = starGame;
     }
 
     @Override
     public void show() {
         super.show();
-
+        img = new Texture("invaders-ship.png");
         exit = new Texture("menuAtlas.png");
-        play = new Texture("menuAtlas.png");
-        bg = new Texture("menu-background.jpg");
+        bg = new Texture("starsky.jpg");
 
         background = new Background(bg);
         exitGame = new ExitGame(exit);
-        playGame = new PlayGame(play, starGame);
+        logo = new Logo(img);
+
     }
 
     @Override
     public void resize(Rect worldBounds) {
         background.resize(worldBounds);
         exitGame.resize(worldBounds);
-        playGame.resize(worldBounds);
+        logo.resize(worldBounds);
     }
 
     @Override
@@ -50,30 +49,33 @@ public class MenuScreen extends BaseScreen {
         super.render(delta);
         batch.begin();
         background.draw(batch);
+
+        logo.draw(batch);
         exitGame.draw(batch);
-        playGame.draw(batch);
         batch.end();
     }
 
     @Override
     public void dispose() {
         exit.dispose();
+        img.dispose();
         bg.dispose();
-        play.dispose();
+
         super.dispose();
     }
 
     @Override
-    public boolean touchDown(Vector2 touch, int pointer, int button) {
+    public boolean touchDown(int screenX, int screenY, int pointer, int button) {
+        super.touchDown(screenX, screenY, pointer, button);
         exitGame.touchDown(touch, pointer, button);
-        playGame.touchDown(touch, pointer, button);
-        return super.touchDown(touch, pointer, button);
+        logo.touchDown(touch, pointer, button);
+        return false;
     }
 
     @Override
-    public boolean touchUp(Vector2 touch, int pointer, int button) {
+    public boolean touchUp(int screenX, int screenY, int pointer, int button) {
+        super.touchUp(screenX, screenY, pointer, button);
         exitGame.touchUp(touch, pointer, button);
-        playGame.touchUp(touch, pointer, button);
-        return super.touchUp(touch, pointer, button);
+        return false;
     }
 }
