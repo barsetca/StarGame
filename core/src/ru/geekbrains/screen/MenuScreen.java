@@ -1,79 +1,105 @@
 package ru.geekbrains.screen;
 
+import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.StarGame;
 import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.sprite.Background;
-import ru.geekbrains.sprite.ExitGame;
-import ru.geekbrains.sprite.PlayGame;
+import ru.geekbrains.sprite.ButtonExit;
+import ru.geekbrains.sprite.ButtonPlay;
+import ru.geekbrains.sprite.Star;
 
 public class MenuScreen extends BaseScreen {
 
     private Texture bg;
-    private Texture exit;
-    private Texture play;
+    private TextureAtlas atlas;
+
     private Background background;
+    private Star[] stars;
 
-    private ExitGame exitGame;
-    private PlayGame playGame;
-    private StarGame starGame;
+    private ButtonExit buttonExit;
+    private ButtonPlay buttonPlay;
 
-    public MenuScreen(StarGame starGame) {
+    private Game starGame;
+
+    public MenuScreen(Game starGame) {
         this.starGame = starGame;
     }
 
     @Override
     public void show() {
         super.show();
-
-        exit = new Texture("menuAtlas.png");
-        play = new Texture("menuAtlas.png");
-        bg = new Texture("menu-background.jpg");
-
+        bg = new Texture("textures/bg.png");
         background = new Background(bg);
-        exitGame = new ExitGame(exit);
-        playGame = new PlayGame(play, starGame);
+
+        atlas = new TextureAtlas(Gdx.files.internal("textures/menuAtlas.tpack"));
+
+        buttonExit = new ButtonExit(atlas);
+        buttonPlay = new ButtonPlay(atlas, starGame);
+        stars = new Star[256];
+        for (int i = 0; i < stars.length; i++) {
+            stars[i] = new Star(atlas);
+        }
     }
 
     @Override
     public void resize(Rect worldBounds) {
         background.resize(worldBounds);
-        exitGame.resize(worldBounds);
-        playGame.resize(worldBounds);
+        buttonExit.resize(worldBounds);
+        buttonPlay.resize(worldBounds);
+        for (Star star : stars) {
+            star.resize(worldBounds);
+        }
     }
 
     @Override
     public void render(float delta) {
         super.render(delta);
-        batch.begin();
-        background.draw(batch);
-        exitGame.draw(batch);
-        playGame.draw(batch);
-        batch.end();
+        update(delta);
+        draw();
+
     }
 
     @Override
     public void dispose() {
-        exit.dispose();
         bg.dispose();
-        play.dispose();
+        atlas.dispose();
         super.dispose();
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        exitGame.touchDown(touch, pointer, button);
-        playGame.touchDown(touch, pointer, button);
+        buttonExit.touchDown(touch, pointer, button);
+        buttonPlay.touchDown(touch, pointer, button);
         return super.touchDown(touch, pointer, button);
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
-        exitGame.touchUp(touch, pointer, button);
-        playGame.touchUp(touch, pointer, button);
+        buttonExit.touchUp(touch, pointer, button);
+        buttonPlay.touchUp(touch, pointer, button);
         return super.touchUp(touch, pointer, button);
+    }
+
+    private void update(float delta) {
+        for (Star star : stars) {
+            star.update(delta);
+        }
+    }
+
+    private void draw() {
+        batch.begin();
+        background.draw(batch);
+        for (Star star : stars) {
+            star.draw(batch);
+        }
+        buttonExit.draw(batch);
+        buttonPlay.draw(batch);
+        batch.end();
     }
 }
