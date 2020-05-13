@@ -50,6 +50,14 @@ public class Sprite extends Rect {
         return false;
     }
 
+    public boolean keyDown(int keycode) {
+        return false;
+    }
+
+    public boolean keyUp(int keycode) {
+        return false;
+    }
+
     public boolean touchDragged(int screenX, int screenY, int pointer) {
         return false;
     }
@@ -69,4 +77,6 @@ public class Sprite extends Rect {
     public void setScale(float scale) {
         this.scale = scale;
     }
+
+
 }
