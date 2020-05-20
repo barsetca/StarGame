@@ -1,7 +1,6 @@
 package ru.geekbrains.screen;
 
 import com.badlogic.gdx.Game;
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -35,9 +34,7 @@ public class MenuScreen extends BaseScreen {
         super.show();
         bg = new Texture("textures/bg.png");
         background = new Background(bg);
-
-        atlas = new TextureAtlas(Gdx.files.internal("textures/menuAtlas.tpack"));
-
+        atlas = new TextureAtlas("textures/menuAtlas.tpack");
         buttonExit = new ButtonExit(atlas);
         buttonPlay = new ButtonPlay(atlas, starGame);
         stars = new Star[256];
@@ -61,7 +58,6 @@ public class MenuScreen extends BaseScreen {
         super.render(delta);
         update(delta);
         draw();
-
     }
 
     @Override
@@ -75,14 +71,14 @@ public class MenuScreen extends BaseScreen {
     public boolean touchDown(Vector2 touch, int pointer, int button) {
         buttonExit.touchDown(touch, pointer, button);
         buttonPlay.touchDown(touch, pointer, button);
-        return super.touchDown(touch, pointer, button);
+        return false;
     }
 
     @Override
     public boolean touchUp(Vector2 touch, int pointer, int button) {
         buttonExit.touchUp(touch, pointer, button);
         buttonPlay.touchUp(touch, pointer, button);
-        return super.touchUp(touch, pointer, button);
+        return false;
     }
 
     private void update(float delta) {
