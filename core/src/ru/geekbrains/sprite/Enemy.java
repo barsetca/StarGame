@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.badlogic.gdx.math.Vector2;
 
 import ru.geekbrains.base.Ship;
+import ru.geekbrains.base.Sprite;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPull;
 import ru.geekbrains.pool.ExplosionPool;
@@ -35,7 +36,7 @@ public class Enemy extends Ship {
             float height
     ) {
         this.regions = regions;
-        this.v0.set(v0);
+        this.v0.set(0, -1f);
         this.bulletRegion = bulletRegion;
         this.bulletHeight = bulletHeight;
         this.bulletV.set(0, bulletVY);
@@ -45,5 +46,11 @@ public class Enemy extends Ship {
         this.hp = hp;
         setHeightProportion(height);
         this.v.set(v0);
+    }
+
+    public void checkIntersection(Sprite bullet) {
+        if (getTop() < worldBounds.getTop() && isInside(bullet)) {
+            destroy();
+        }
     }
 }

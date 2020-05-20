@@ -6,12 +6,16 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
 
+import java.util.List;
+
 import ru.geekbrains.base.BaseScreen;
 import ru.geekbrains.math.Rect;
 import ru.geekbrains.pool.BulletPull;
 import ru.geekbrains.pool.EnemyPool;
 import ru.geekbrains.pool.ExplosionPool;
 import ru.geekbrains.sprite.Background;
+import ru.geekbrains.sprite.Bullet;
+import ru.geekbrains.sprite.Enemy;
 import ru.geekbrains.sprite.MainShip;
 import ru.geekbrains.sprite.Star;
 import ru.geekbrains.utils.EnemyEmitter;
@@ -53,8 +57,23 @@ public class GameScreen extends BaseScreen {
     public void render(float delta) {
         super.render(delta);
         update(delta);
+        intersection();
         free();
         draw();
+    }
+
+    private void intersection() {
+        List<Bullet> bullets = bulletPool.getActiveObjects();
+        List<Enemy> enemies = enemyPool.getActiveObjects();
+        for (Bullet bullet : bullets) {
+            if (bullet.getOwner().equals(mainShip)) {
+                for (Enemy enemy : enemies) {
+                    enemy.checkIntersection(bullet);
+                    enemy.checkIntersection(mainShip);
+                }
+            }
+        }
+
     }
 
     @Override
@@ -112,6 +131,7 @@ public class GameScreen extends BaseScreen {
         explosionPool.updateActiveSprites(delta);
         mainShip.update(delta);
         enemyEmitter.generate(delta);
+
     }
 
     private void free() {

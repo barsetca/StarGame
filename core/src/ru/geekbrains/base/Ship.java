@@ -56,10 +56,16 @@ public class Ship extends Sprite {
     @Override
     public void update(float delta) {
         super.update(delta);
+        if (getTop() >= worldBounds.getTop()) {
+            pos.mulAdd(v0, delta);
+            return;
+        }
+        if (reloadTimer == 0f) {
+            shoot();
+        }
         pos.mulAdd(v, delta);
         reloadTimer += delta;
         if (reloadTimer >= reloadInterval) {
-            shoot();
             reloadTimer = 0f;
         }
     }
