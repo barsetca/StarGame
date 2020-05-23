@@ -11,6 +11,8 @@ import ru.geekbrains.pool.ExplosionPool;
 
 public class Enemy extends Ship {
 
+    private static final float V_Y = -0.3f;
+
     public Enemy(BulletPull bulletPool, ExplosionPool explosionPool, Rect worldBounds, Sound sound) {
         super(bulletPool, explosionPool, worldBounds, sound);
     }
@@ -18,6 +20,11 @@ public class Enemy extends Ship {
     @Override
     public void update(float delta) {
         super.update(delta);
+        if (getTop() < worldBounds.getTop()) {
+            v.set(v0);
+            bulletPos.set(pos.x, pos.y - getHalfHeight());
+            autoShoot(delta);
+        }
         if (getBottom() <= worldBounds.getBottom()) {
             destroy();
         }
@@ -44,6 +51,14 @@ public class Enemy extends Ship {
         this.reloadTimer = reloadInterval;
         this.hp = hp;
         setHeightProportion(height);
-        this.v.set(v0);
+        v.set(0, V_Y);
+    }
+
+    public boolean isBulletCollision(Bullet bullet) {
+        return !(bullet.getRight() < getLeft()
+                || bullet.getLeft() > getRight()
+                || bullet.getBottom() > getTop()
+                || bullet.getTop() < pos.y
+        );
     }
 }
