@@ -51,6 +51,7 @@ public class MenuScreen extends BaseScreen {
         for (Star star : stars) {
             star.resize(worldBounds);
         }
+
     }
 
     @Override
