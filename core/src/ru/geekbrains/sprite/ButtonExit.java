@@ -3,7 +3,6 @@ package ru.geekbrains.sprite;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.TextureRegion;
 
 import ru.geekbrains.base.ScaledButton;
 import ru.geekbrains.math.Rect;
@@ -21,6 +20,11 @@ public class ButtonExit extends ScaledButton {
         setHeightProportion(0.2f);
         setBottom(worldBounds.getBottom() + MARGIN);
         setRight(worldBounds.getRight() - MARGIN);
+    }
+
+    public void resizeGameScreen(Rect worldBounds) {
+        setHeightProportion(0.15f);
+        setBottom(worldBounds.getBottom() + MARGIN);
 
     }
 
