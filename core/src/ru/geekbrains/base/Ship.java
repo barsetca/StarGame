@@ -111,7 +111,7 @@ public class Ship extends Sprite {
         sound.play();
     }
 
-    private void boom() {
+    protected void boom() {
         Explosion explosion = explosionPool.obtain();
         explosion.set(getHeight(), pos);
     }

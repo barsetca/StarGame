@@ -13,8 +13,8 @@ import ru.geekbrains.pool.ExplosionPool;
 
 public class MainShip extends Ship {
 
-    private static final float SIZE = 0.15f;
-    private static final float MARGIN = 0.05f;
+    public static final float SIZE = 0.15f;
+    private static final float MARGIN = 0.02f;
     private static final int INVALID_POINTER = -1;
     private static final int HP = 100;
 
@@ -23,6 +23,8 @@ public class MainShip extends Ship {
 
     private boolean pressedLeft;
     private boolean pressedRight;
+    private boolean pressedUp;
+    private boolean pressedDown;
 
     public MainShip(TextureAtlas atlas, BulletPull bulletPool, ExplosionPool explosionPool) {
         super(atlas.findRegion("main_ship"), 1, 2, 2);
@@ -45,8 +47,11 @@ public class MainShip extends Ship {
         rightPointer = INVALID_POINTER;
         pressedLeft = false;
         pressedRight = false;
+        pressedUp = false;
+        pressedDown = false;
         stop();
         this.pos.x = 0;
+        this.pos.y = this.halfHeight - 0.5f + MARGIN;
         flushDestroy();
     }
 
@@ -70,11 +75,19 @@ public class MainShip extends Ship {
             stop();
             setRight(worldBounds.getRight());
         }
+        if (getBottom() < worldBounds.getBottom() + MARGIN) {
+            stop();
+            setBottom(worldBounds.getBottom() + MARGIN);
+        }
+        if (getTop() > worldBounds.getTop()) {
+            stop();
+            setTop(worldBounds.getTop());
+        }
     }
 
     @Override
     public boolean touchDown(Vector2 touch, int pointer, int button) {
-        if (touch.x < worldBounds.pos.x) {
+        if (touch.x < this.pos.x) {
             if (leftPointer != INVALID_POINTER) {
                 return false;
             }
@@ -122,10 +135,18 @@ public class MainShip extends Ship {
                 pressedRight = true;
                 moveRight();
                 break;
+            case Input.Keys.W:
             case Input.Keys.UP:
-                shoot();
+                pressedUp = true;
+                moveUp();
+                break;
+            case Input.Keys.S:
+            case Input.Keys.DOWN:
+                pressedDown = true;
+                moveDown();
                 break;
         }
+
         return false;
     }
 
@@ -136,6 +157,10 @@ public class MainShip extends Ship {
                 pressedLeft = false;
                 if (pressedRight) {
                     moveRight();
+                } else if (pressedUp) {
+                    moveUp();
+                } else if (pressedDown) {
+                    moveDown();
                 } else {
                     stop();
                 }
@@ -145,6 +170,36 @@ public class MainShip extends Ship {
                 pressedRight = false;
                 if (pressedLeft) {
                     moveLeft();
+                } else if (pressedUp) {
+                    moveUp();
+                } else if (pressedDown) {
+                    moveDown();
+                } else {
+                    stop();
+                }
+                break;
+            case Input.Keys.W:
+            case Input.Keys.UP:
+                pressedUp = false;
+                if (pressedLeft) {
+                    moveLeft();
+                } else if (pressedRight) {
+                    moveRight();
+                } else if (pressedDown) {
+                    moveDown();
+                } else {
+                    stop();
+                }
+                break;
+            case Input.Keys.S:
+            case Input.Keys.DOWN:
+                pressedDown = false;
+                if (pressedLeft) {
+                    moveLeft();
+                } else if (pressedRight) {
+                    moveRight();
+                } else if (pressedUp) {
+                    moveUp();
                 } else {
                     stop();
                 }
@@ -172,6 +227,15 @@ public class MainShip extends Ship {
     private void moveLeft() {
         v.set(v0).rotate(180);
     }
+
+    private void moveUp() {
+        v.set(v0).rotate(90);
+    }
+
+    private void moveDown() {
+        v.set(v0).rotate(270);
+    }
+
 
     private void stop() {
         v.setZero();

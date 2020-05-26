@@ -1,6 +1,8 @@
 package ru.geekbrains.screen;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.math.Vector2;
@@ -10,18 +12,23 @@ import ru.geekbrains.math.Rect;
 import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.ButtonExit;
 import ru.geekbrains.sprite.ButtonPlay;
+import ru.geekbrains.sprite.MenuPicture;
 import ru.geekbrains.sprite.Star;
 
 public class MenuScreen extends BaseScreen {
 
     private Texture bg;
+    private Texture pg;
     private TextureAtlas atlas;
 
     private Background background;
+    private MenuPicture menuPicture;
     private Star[] stars;
 
     private ButtonExit buttonExit;
     private ButtonPlay buttonPlay;
+
+    private Music music;
 
     private Game starGame;
 
@@ -32,8 +39,10 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void show() {
         super.show();
+        pg = new Texture("hotpng.com.png");
         bg = new Texture("textures/bg.png");
         background = new Background(bg);
+        menuPicture = new MenuPicture(pg);
         atlas = new TextureAtlas("textures/menuAtlas.tpack");
         buttonExit = new ButtonExit(atlas);
         buttonPlay = new ButtonPlay(atlas, starGame);
@@ -41,11 +50,15 @@ public class MenuScreen extends BaseScreen {
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Star(atlas);
         }
+        music = Gdx.audio.newMusic(Gdx.files.internal("sounds/Space_Walker.mp3"));
+        music.setLooping(true);
+        music.play();
     }
 
     @Override
     public void resize(Rect worldBounds) {
         background.resize(worldBounds);
+        menuPicture.resize(worldBounds);
         buttonExit.resize(worldBounds);
         buttonPlay.resize(worldBounds);
         for (Star star : stars) {
@@ -63,7 +76,9 @@ public class MenuScreen extends BaseScreen {
     @Override
     public void dispose() {
         bg.dispose();
+        pg.dispose();
         atlas.dispose();
+        music.dispose();
         super.dispose();
     }
 
@@ -93,6 +108,7 @@ public class MenuScreen extends BaseScreen {
         for (Star star : stars) {
             star.draw(batch);
         }
+        menuPicture.draw(batch);
         buttonExit.draw(batch);
         buttonPlay.draw(batch);
         batch.end();

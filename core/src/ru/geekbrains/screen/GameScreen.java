@@ -17,9 +17,9 @@ import ru.geekbrains.pool.EnemyPool;
 import ru.geekbrains.pool.ExplosionPool;
 import ru.geekbrains.sprite.Background;
 import ru.geekbrains.sprite.Bullet;
+import ru.geekbrains.sprite.ButtonExit;
 import ru.geekbrains.sprite.ButtonNewGame;
 import ru.geekbrains.sprite.Enemy;
-import ru.geekbrains.sprite.Explosion;
 import ru.geekbrains.sprite.GameOver;
 import ru.geekbrains.sprite.MainShip;
 import ru.geekbrains.sprite.Star;
@@ -38,6 +38,9 @@ public class GameScreen extends BaseScreen {
     private Texture bg;
     private Background background;
     private TextureAtlas atlas;
+    private TextureAtlas atlasMenu;
+    private ButtonExit buttonExit;
+
     private Star[] stars;
     private MainShip mainShip;
     private BulletPull bulletPool;
@@ -60,6 +63,8 @@ public class GameScreen extends BaseScreen {
         bg = new Texture("textures/bg.png");
         background = new Background(bg);
         atlas = new TextureAtlas("textures/mainAtlas.tpack");
+        atlasMenu = new TextureAtlas("textures/menuAtlas.tpack");
+        buttonExit = new ButtonExit(atlasMenu);
         stars = new Star[64];
         for (int i = 0; i < stars.length; i++) {
             stars[i] = new Star(atlas);
@@ -100,6 +105,7 @@ public class GameScreen extends BaseScreen {
         enemyEmitter.resize(worldBounds);
         gameOver.resize(worldBounds);
         buttonNewGame.resize(worldBounds);
+        buttonExit.resizeGameOver(worldBounds);
         font.setSize(FONT_SIZE);
     }
 
@@ -107,6 +113,7 @@ public class GameScreen extends BaseScreen {
     public void dispose() {
         bg.dispose();
         atlas.dispose();
+        atlasMenu.dispose();
         bulletPool.dispose();
         enemyPool.dispose();
         explosionPool.dispose();
@@ -138,6 +145,7 @@ public class GameScreen extends BaseScreen {
             mainShip.touchDown(touch, pointer, button);
         } else if (state == State.GAME_OVER) {
             buttonNewGame.touchDown(touch, pointer, button);
+            buttonExit.touchDown(touch, pointer, button);
         }
         return false;
     }
@@ -148,6 +156,7 @@ public class GameScreen extends BaseScreen {
             mainShip.touchUp(touch, pointer, button);
         } else if (state == State.GAME_OVER) {
             buttonNewGame.touchUp(touch, pointer, button);
+            buttonExit.touchUp(touch, pointer, button);
         }
         return false;
     }
@@ -184,19 +193,31 @@ public class GameScreen extends BaseScreen {
         List<Bullet> bulletList = bulletPool.getActiveObjects();
         for (Enemy enemy : enemyList) {
             float minDist = enemy.getHalfWidth() + mainShip.getHalfWidth();
-            if (mainShip.pos.dst(enemy.pos) < minDist) {
+            float dist = mainShip.pos.dst(enemy.pos);
+            int enemyDamage = enemy.getDamage();
+            if (dist < minDist) {
                 enemy.destroy();
                 mainShip.damage(enemy.getDamage());
                 continue;
             }
+            int explosionDamage = (int) Math.floor(enemyDamage / 2.0f);
+            if (enemy.getBottom() <= worldBounds.getBottom()) {
+                enemy.destroy();
+                mainShip.damage(explosionDamage);
+                continue;
+            }
+
             for (Bullet bullet : bulletList) {
-                if (bullet.getOwner() != mainShip ||  bullet.isDestroyed()) {
+                if (bullet.getOwner() != mainShip || bullet.isDestroyed()) {
                     continue;
                 }
                 if (enemy.isBulletCollision(bullet)) {
                     enemy.damage(bullet.getDamage());
                     bullet.destroy();
                     if (enemy.isDestroyed()) {
+                        if (dist >= minDist && dist <= mainShip.SIZE * 2.0f) {
+                            mainShip.damage(explosionDamage);
+                        }
                         frags += 1;
                     }
                 }
@@ -235,6 +256,7 @@ public class GameScreen extends BaseScreen {
         } else if (state == State.GAME_OVER) {
             gameOver.draw(batch);
             buttonNewGame.draw(batch);
+            buttonExit.draw(batch);
         }
         explosionPool.drawActiveSprites(batch);
         printInfo();
@@ -247,7 +269,6 @@ public class GameScreen extends BaseScreen {
         sbLevel.setLength(0);
         font.draw(batch, sbFrags.append(FRAGS).append(frags), worldBounds.getLeft() + TEXT_MARGIN, worldBounds.getTop() - TEXT_MARGIN);
         font.draw(batch, sbHp.append(HP).append(mainShip.getHp()), worldBounds.pos.x, worldBounds.getTop() - TEXT_MARGIN, Align.center);
-        font.draw(batch, sbHp, mainShip.pos.x, mainShip.getBottom() - TEXT_MARGIN, Align.center);
         font.draw(batch, sbLevel.append(LEVEL).append(enemyEmitter.getLevel()), worldBounds.getRight() - TEXT_MARGIN, worldBounds.getTop() - TEXT_MARGIN, Align.right);
     }
 }

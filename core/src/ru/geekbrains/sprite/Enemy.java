@@ -25,9 +25,6 @@ public class Enemy extends Ship {
             bulletPos.set(pos.x, pos.y - getHalfHeight());
             autoShoot(delta);
         }
-        if (getBottom() <= worldBounds.getBottom()) {
-            destroy();
-        }
     }
 
     public void set(
