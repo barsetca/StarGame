@@ -16,7 +16,7 @@ public class MainShip extends Ship {
     private static final float SIZE = 0.15f;
     private static final float MARGIN = 0.05f;
     private static final int INVALID_POINTER = -1;
-    private static final int HP = 10;
+    private static final int HP = 100;
 
     private int leftPointer;
     private int rightPointer;
@@ -33,12 +33,21 @@ public class MainShip extends Ship {
         bulletHeight = 0.01f;
         damage = 1;
         v0.set(0.5f, 0);
-        leftPointer = INVALID_POINTER;
-        rightPointer = INVALID_POINTER;
         reloadInterval = 0.25f;
         reloadTimer = reloadInterval;
-        hp = HP;
         sound = Gdx.audio.newSound(Gdx.files.internal("sounds/laser.wav"));
+        startNewGame();
+    }
+
+    public void startNewGame() {
+        hp = HP;
+        leftPointer = INVALID_POINTER;
+        rightPointer = INVALID_POINTER;
+        pressedLeft = false;
+        pressedRight = false;
+        stop();
+        this.pos.x = 0;
+        flushDestroy();
     }
 
     @Override

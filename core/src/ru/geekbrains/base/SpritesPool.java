@@ -52,6 +52,11 @@ public abstract class SpritesPool<T extends Sprite> {
         }
     }
 
+    public void freeAllActiveObjects() {
+        freeObjects.addAll(activeObjects);
+        activeObjects.clear();
+    }
+
     public List<T> getActiveObjects() {
         return activeObjects;
     }
@@ -68,5 +73,4 @@ public abstract class SpritesPool<T extends Sprite> {
         }
         System.out.println(getClass().getName() + " active/free: " + activeObjects.size() + "/" + freeObjects.size());
     }
-
 }
